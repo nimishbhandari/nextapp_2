@@ -7,7 +7,10 @@ import styles from "../styles/Home.module.css";
 export default function Home() {
   const router = useRouter();
   const { data: session } = useSession();
-  console.log("session", session);
+  // console.log("session", session);
+  if (session) {
+    console.log("yes");
+  }
 
   return (
     <div className={styles.container}>

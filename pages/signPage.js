@@ -1,34 +1,56 @@
-import { getCsrfToken } from "next-auth/react";
-import { useSession } from "next-auth/react";
+import { useSession, signIn, signOut } from "next-auth/react";
+import { useRouter } from "next/router";
+import { useState } from "react";
 
-const signPage = ({ csrfToken }) => {
+const signPage = () => {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const router = useRouter();
   const { data: session, status } = useSession();
-  console.log("session", session);
+  if (session) {
+    router.push("/");
+    console.log("yes");
+  }
+
+  console.log({ email, password });
+
+  const submitHandler = (e) => {
+    e.preventDefault();
+    signIn("credentials", { email, password });
+  };
 
   return (
-    <form method="post" action="/api/auth/signin">
-      <input name="csrfToken" type="hidden" defaultValue={csrfToken} />
-      <label>
-        Username
-        <input name="email" type="text" />
-      </label>
-      <label>
-        Password
-        <input name="password" type="password" />
-      </label>
-      <button type="submit">Sign in</button>
-    </form>
+    <>
+      {session ? (
+        <button onClick={() => signOut()}>Log Out</button>
+      ) : (
+        <form
+          onSubmit={submitHandler}
+          method="post"
+          action="/api/auth/callback/credentials"
+        >
+          <label>
+            email
+            <input
+              name="email"
+              type="text"
+              onChange={(e) => setEmail(e.target.value)}
+            />
+          </label>
+          <label>
+            Password
+            <input
+              name="password"
+              type="password"
+              onChange={(e) => setPassword(e.target.value)}
+            />
+          </label>
+          <button>Sign in</button>
+        </form>
+      )}
+    </>
   );
 };
-
-export async function getServerSideProps(context) {
-  const csrfToken = await getCsrfToken(context);
-  return {
-    props: {
-      csrfToken: { csrfToken },
-    },
-  };
-}
 
 export default signPage;
 

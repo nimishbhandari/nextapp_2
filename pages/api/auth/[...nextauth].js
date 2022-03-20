@@ -6,23 +6,19 @@ export default NextAuth({
     CredentialProvider({
       name: "credentials",
       credentials: {
-        username: {
+        email: {
           label: "Email",
           type: "text",
-          placeholder: "johndoe@test.com",
         },
         password: { label: "Password", type: "password" },
       },
       authorize: (credentials) => {
         // database look up
-        if (
-          credentials.username === "john" &&
-          credentials.password === "test"
-        ) {
+        if (credentials.email === "admin" && credentials.password === "test") {
           return {
-            id: 2,
-            name: "John",
-            email: "johndoe@test.com",
+            id: 38934831,
+            name: "Admin",
+            email: "admin@test.com",
           };
         }
 
